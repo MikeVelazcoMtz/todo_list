@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block title %}
+    <title>Home</title>
+{% endblock title %}
+{% block css %}
+    <link rel="stylesheet" href="{% static "home.css" %}">
+{% endblock css %}
+{% block js %}
+    <script src="{% static "home.js" %}"></script>
+{% endblock js %}
+{% block content %}
+    {% include "header.html" %}
+    <div class="container">
+        <!-- Start Tabs -->
+        <ul class="nav nav-pills">
+          <li class="active">
+            <a data-toggle="pill" href="#home">Active</a>
+          </li>
+          <li>
+            <a data-toggle="pill" href="#menu1">Finished</a>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div id="home" class="tab-pane fade in active">
+            <br>
+            <div class="row">
+                <div class="col-md-6 col-xs-6">
+                    <h3 class="title">Active Items</h3>
+                </div>
+                <div class="col-md-6  col-xs-6 text-rigth">
+                    <a class="btn btn-info btn-lg f_right" data-toggle="modal" data-target="#new_item_modal">Add Items to the List</a>                
+                </div>
+            </div>
+            <br>
+
+            <!-- Start To-do List -->
+            <div class="list-group list-group-active">
+              {% for item in list_items %}
+                  <a href="#" class="list-group-item list_item_active" data-id="{{ item.id }}" data-status="{{ item.status }}" data-name="{{ item.list_name }}" data-description="{{ item.description }}">
+                      <h4 class="list-group-item-heading">
+                          {{ item.list_name }}
+                      </h4>
+                      <p class="list-group-item-text">
+                          {{ item.description }}
+                      </p>
+                  </a>
+              {% empty %}
+                  <h1>This list is empty :)</h1>
+              {% endfor %}
+            </div>
+          </div>
+          <div id="menu1" class="tab-pane fade">
+            <br>
+            <div class="row">
+              <div class="col-md-12">
+                <h3>Finished Items</h3>
+              </div>
+            </div>
+            <br>
+            <div class="list-group">
+              {% for item in finished_items %}
+                  <a href="#" class="list-group-item" data-id="{{ item.id }}" data-status="{{ item.status }}" data-name="{{ item.list_name }}" data-description="{{ item.description }}">
+                      <h4 class="list-group-item-heading">
+                          {{ item.list_name }}
+                      </h4>
+                      <p class="list-group-item-text">
+                          {{ item.description }}
+                      </p>
+                  </a>
+              {% empty %}
+                  <h1>This list is empty :)</h1>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <!-- End Tabs -->
+        <!-- End To-do List -->
+        <!-- Start New Item Modal -->
+        <div id="new_item_modal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+              <form action="POST" id="new_item">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">New list item</h4>
+                </div>
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="alert alert-danger" id="alert_new">
+                      <strong>Warning!</strong> List name can´t be empty.
+                    </div>
+                    {% bootstrap_form list_form %}
+                </div>
+                <div class="modal-footer">
+                  <input type="submit" class="btn btn-primary f_left" value="Create">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+        <!-- End New Item Modal -->
+        <!-- Start Edit Item Modal -->
+        <!-- Modal -->
+        <div id="edit_item_modal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+            <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit item</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="alert alert-danger" id="alert_edit">
+                      <strong>Warning!</strong> List name can´t be empty.
+                    </div>
+                    <input type="hidden" name="update_id" id="update_id">
+                    <div class="form-group">
+                        <label class="control-label" for="list_name">List Name</label>
+                        <input class="form-control" id="list_name" maxlength="150" name="list_name" placeholder="List Name" required="required" title="" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="description">Description</label>
+                        <textarea class="form-control" cols="40" id="description" maxlength="300" name="description" placeholder="Description" required="required" rows="10" title="">
+                        </textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <input type="submit" id="update_item" class="btn btn-primary f_left" value="Update">
+                    <input type="submit" id="mark_finished" class="btn btn-warning f_left" value="Mark as Finished">
+                    <input type="submit" id="mark_active" class="btn btn-warning f_left" value="Mark as Active">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+          </div>
+        </div>
+        <!-- End Edit Item Modal -->
+    </div>
+{% endblock content %}
